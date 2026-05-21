@@ -18,4 +18,3 @@ def insert_insumos(nome :str, valor_unitario: float, quantidade_estoque: float, 
         cursor.close()
         con.close()
 
-
