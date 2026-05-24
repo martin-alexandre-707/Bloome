@@ -11,7 +11,7 @@ def criar_conexao():
             host=os.getenv('DB_HOST'),
             port=os.getenv ('DB_PORT')
         )
-        print("Conexão com sucesso")
+        #print("Conexão com sucesso")
         return conn
     except Exception as e:
         print(f"Erro de conexao: {e}")
