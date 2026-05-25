@@ -3,6 +3,9 @@ import os
 from config.crypt import criptografar, checar_password
 from repositories.auth import login, cadastrar_usuario
 from services.insumos_service import menu_insumos
+from services.cadastro_services import menu_acessorios
+from services.vendas import menu_vendas 
+
 
 
 def menu_principal():
@@ -11,14 +14,18 @@ def menu_principal():
         print("         MENU PRINCIPAL")
         print("="*30)
         print("1 - Gerenciar Insumos")
-        # print("2 - Produtos")   ← só adicionar aqui
+        print("2 - Gerenciar Peças")
+        print("3 - Gerenciar Vendas")
         print("0 - Sair")
         print("="*30)
 
         match input("Opção: "):
             case "1": menu_insumos()
-            case "0": print("Até logo!")
-            break
+            case "2": menu_acessorios()
+            case "3": menu_vendas()
+            case "0": 
+                print("Até logo!")
+                break
             case _: print("Opção inválida.")
 
 

@@ -21,8 +21,8 @@ def menu_insumos():
             case "1":
                 try:
                     nome = input("Nome do insumo: ").strip().lower()
-                    valor = float(input("Valor unitário: "))
-                    quantidade = float(input("Quantidade em estoque: "))
+                    valor = float(input("Valor unitário: ").replace(",", "."))
+                    quantidade = float(input("Quantidade em estoque: ").replace(",", "."))
                     categoria = input("Categoria: ").strip().lower()
                     insert_insumos(nome, valor, quantidade, categoria)
                 except ValueError:
@@ -30,20 +30,17 @@ def menu_insumos():
                 pausar()
 
             case "2":
-                busca = input(
-                    "Digite o nome para buscar (ou pressione Enter para listar todos): ").strip().lower()
-                busca = busca if busca != "" else None
+                busca = input("Digite o nome para buscar (ou pressione Enter para listar todos): ").strip().lower()
+                busca = busca or None
                 insumos = listar_insumos(busca)
 
                 if insumos:
                     print("\n--- Lista de Insumos ---")
                     for insumo in insumos:
-                        print(
-                            f"{insumo[0]:<4} | {insumo[1]:<20} | R$ {float(insumo[2]):<8.2f} | Estoque: {float(insumo[3]):<8} | {insumo[4]}")
+                        print(f"{insumo[0]:<4} | {insumo[1]:<20} | R$ {float(insumo[2]):<8.2f} | Estoque: {float(insumo[3]):<8} | {insumo[4]}")
                 else:
                     if busca:
-                        print(
-                            f"Nenhum insumo encontrado com o nome '{busca}'.")
+                        print(f"Nenhum insumo encontrado com o nome '{busca}'.")
                     else:
                         print("Nenhum insumo cadastrado no sistema.")
                 pausar()
@@ -53,8 +50,8 @@ def menu_insumos():
                     nome = input(
                         "Nome do insumo que deseja atualizar: ").strip().lower()
                     novo_nome = input("Nome: ").strip().lower()
-                    valor = float(input("Valor unitário: "))
-                    quantidade = float(input("Quantidade em estoque: "))
+                    valor = float(input("Valor unitário: ").replace(",", "."))
+                    quantidade = float(input("Quantidade em estoque: ").replace(",", "."))
                     categoria = input("Categoria: ").strip().lower()
                     atualizar_insumos(nome, novo_nome, valor,
                                       quantidade, categoria)
@@ -66,8 +63,8 @@ def menu_insumos():
                 nome = input(
                     "Nome do insumo que deseja deletar: ").strip().lower()
                 confirmacao = input(
-                    f"Tem certeza que deseja deletar '{nome}'? (S/N): ").strip().lower()
-                if confirmacao == "s":
+                    f"Tem certeza que deseja deletar '{nome}'? (S/N): ").strip().upper()
+                if confirmacao == "S":
                     deletar_insumos(nome)
                 else:
                     print("Abortado.")

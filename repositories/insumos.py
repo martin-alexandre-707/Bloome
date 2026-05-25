@@ -41,12 +41,12 @@ def listar_insumos(nome_insumo=None):
 
         if not nome_insumo:
             cursor.execute("""
-                SELECT *
+                SELECT id_insumos, nome, valor_unitario, quantidade_estoque, categoria
                   FROM insumos
             """)
         else:
             cursor.execute("""
-                SELECT *
+                SELECT id_insumos, nome, valor_unitario, quantidade_estoque, categoria
                   FROM insumos
                  WHERE nome ILIKE %s
             """, (f"%{nome_insumo}%",))
@@ -77,7 +77,11 @@ def deletar_insumos(nome: str):
         """, (nome,))
 
         con.commit()
-        print(f"{nome} deletado com sucesso!")
+
+        if cursor.rowcount == 0:
+            print(f"Insumo '{nome}' não encontrado.")
+        else:
+            print(f"{nome} deletado com sucesso!")
 
     except Exception as e:
         if con:
