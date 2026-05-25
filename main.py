@@ -1,45 +1,49 @@
-from config.db import criar_conexao
-from repositories.insumos import insert_insumos
-from repositories.auth import login 
-import os
 import getpass
+import os
+from config.crypt import criptografar, checar_password
+from repositories.auth import login, cadastrar_usuario
+from services.insumos_service import menu_insumos
 
 
-usuario=input("Digite o usuario: ")
-password= getpass.getpass("Digite a sua senha: ")
-user_logged = login(usuario, password)
-
-
-#
-#
-#
-#
-
-
-
-if user_logged:
-    print("Seja bem-vindo!")
+def menu_principal():
     while True:
-        print("----MENU----/n1-Cadastrar insumos/n2-")    
-        opcao= input("Digite a opção que deseja acessar")
-        match opcao:
-            case "1":
-                print("opção 1")
-                # Aba insumos
-#   Cadastrar novo insumo, colocando o nome (UNICO e com limite de 255 caractareses que nem o banco de dados), o valor unitario (pode ser >= 0 mas nn pode ser negativo) (metro ou unidade), quantidade a ser adicionada, e categoria que é o insumo ex: cordão, fecho e pingente. tudo vai ser salvo com acento e menisculo
-#
-# Ver estoque (select * from insumos)
-#       
-#
-# Editar estoque
-#   adicionar ou remover quantidade de insumo já existente
+        print("\n" + "="*30)
+        print("         MENU PRINCIPAL")
+        print("="*30)
+        print("1 - Gerenciar Insumos")
+        # print("2 - Produtos")   ← só adicionar aqui
+        print("0 - Sair")
+        print("="*30)
 
-                pass
-            case "2":
-                pass
-            case "3":
-                pass
-            case "4":
-                pass
-else:
-    print("Usuário ou senha inválidos")
+        match input("Opção: "):
+            case "1": menu_insumos()
+            case "0": print("Até logo!")
+            break
+            case _: print("Opção inválida.")
+
+
+def autenticar():
+    print("1 - Login\n2 - Cadastrar usuário")
+    match input("Escolha: "):
+        case "1":
+            usuario = input("Usuário: ")
+            senha = getpass.getpass("Senha: ")
+            user = login(usuario)
+
+            if user and checar_password(senha, user[1]):
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(f"Seja bem-vindo, {usuario}!")
+                menu_principal()
+            else:
+                print("Usuário ou senha inválidos.")
+
+        case "2":
+            usuario = input("Usuário: ")
+            senha = getpass.getpass("Senha: ")
+            cadastrar_usuario(usuario, criptografar(senha))
+
+        case _:
+            print("Opção inválida.")
+
+
+autenticar()
