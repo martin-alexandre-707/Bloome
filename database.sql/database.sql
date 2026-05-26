@@ -1,6 +1,5 @@
 -- ============================================================
 --  BLOOME - Script de criação do banco de dados
---  Execute este arquivo no PostgreSQL antes de rodar o sistema
 -- ============================================================
 
 
