@@ -36,7 +36,7 @@ def _selecionar_insumos():
         
         for item in insumos_disponiveis:
             nome_do_item = item[1]
-            if nome_do_item == nome_digitado:
+            if nome_do_item.lower() == nome_digitado:
                 insumo_encontrado = item
                 break 
 
@@ -44,19 +44,23 @@ def _selecionar_insumos():
             print("Insumo não encontrado. Tente novamente.")
             continue
 
-        try:
-            quantidade = float(input(f"Quantidade de '{insumo_encontrado[1]}': ").replace(",", "."))
-            
-            valor_unitario = float(insumo_encontrado[2])
-            subtotal = quantidade * valor_unitario
-            custo_total = custo_total + subtotal
+        while True:
+            try:
+                quantidade = float(input(f"Quantidade de '{insumo_encontrado[1]}': ").replace(",", "."))
+                if quantidade <= 0:
+                    print("A quantidade deve ser maior que zero.")
+                    continue
+                break
+            except ValueError:
+                print("Entrada inválida. Digite apenas números para a quantidade.")
 
-            insumos_selecionados.append((insumo_encontrado[1], quantidade))
-            
-            print(f"  + Adicionado: {quantidade}x {insumo_encontrado[1]} | Custo acumulado: R$ {custo_total:.2f}")
+        valor_unitario = float(insumo_encontrado[2])
+        subtotal = quantidade * valor_unitario
+        custo_total = custo_total + subtotal
 
-        except ValueError:
-            print("Entrada inválida. Digite apenas números para a quantidade.")
+        insumos_selecionados.append((insumo_encontrado[1], quantidade))
+
+        print(f"  + Adicionado: {quantidade}x {insumo_encontrado[1]} | Custo acumulado: R$ {custo_total:.2f}")
 
     return insumos_selecionados, custo_total
 
@@ -127,35 +131,59 @@ def menu_acessorios():
                 pausar()
 
             case "3":
+                print("\n--- Produtos Cadastrados ---")
+                todos = listar_acessorios()
+                if not todos:
+                    print("Nenhum produto cadastrado.")
+                    pausar()
+                    continue
+                for p in todos:
+                    print(f"  {p[0]:<4} | {p[1]}")
+                print("-" * 30)
+
                 try:
                     nome = input("Nome do produto que deseja atualizar: ").strip().lower()
 
                     produtos_existentes = listar_acessorios(nome)
-                    produto_encontrado = False
-                    
+                    produto_encontrado = None
                     if produtos_existentes:
                         for produto in produtos_existentes:
-                            if produto[1] == nome: 
-                                produto_encontrado = True
+                            if produto[1] == nome:
+                                produto_encontrado = produto
                                 break
-                    
-                  
+
                     if not produto_encontrado:
                         print(f"Produto '{nome}' não encontrado no sistema.")
                         pausar()
-                        continue 
-                   
-                    novo_nome = input("Nome: ").strip().lower()
-                    categoria = input("Categoria: ").strip().lower()
-                    valor_venda = float(input("Preço de venda (R$): ").replace(",", "."))
-                    
+                        continue
+
+                    print(f"\nDados atuais:")
+                    print(f"  Nome     : {produto_encontrado[1]}")
+                    print(f"  Categoria: {produto_encontrado[2]}")
+                    print(f"  Valor    : R$ {float(produto_encontrado[3]):.2f}")
+                    print("\nNovos dados (Enter para manter o atual):")
+
+                    novo_nome = input(f"Nome [{produto_encontrado[1]}]: ").strip().lower() or produto_encontrado[1]
+                    categoria = input(f"Categoria [{produto_encontrado[2]}]: ").strip().lower() or produto_encontrado[2]
+                    valor_str = input(f"Preço de venda [{float(produto_encontrado[3]):.2f}]: ").replace(",", ".")
+                    valor_venda = float(valor_str) if valor_str else float(produto_encontrado[3])
+
                     atualizar_acessorio(nome, novo_nome, categoria, valor_venda)
-                    
+
                 except ValueError:
                     print("Erro: preço de venda deve ser um número.")
                 pausar()
 
             case "4":
+                print("\n--- Produtos Cadastrados ---")
+                todos = listar_acessorios()
+                if not todos:
+                    print("Nenhum produto cadastrado.")
+                    pausar()
+                    continue
+                for p in todos:
+                    print(f"  {p[0]:<4} | {p[1]}")
+                print("-" * 30)
 
                 nome = input("Nome do produto que deseja deletar: ").strip().lower()
 

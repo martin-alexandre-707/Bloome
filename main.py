@@ -30,27 +30,30 @@ def menu_principal():
 
 
 def autenticar():
-    print("1 - Login\n2 - Cadastrar usuário")
-    match input("Escolha: "):
-        case "1":
-            usuario = input("Usuário: ")
-            senha = getpass.getpass("Senha: ")
-            user = login(usuario)
+    while True:
+        print("1 - Login\n2 - Cadastrar usuário")
+        match input("Escolha: "):
+            case "1":
+                usuario = input("Usuário: ")
+                senha = getpass.getpass("Senha: ")
+                user = login(usuario)
 
-            if user and checar_password(senha, user[1]):
-                os.system('cls' if os.name == 'nt' else 'clear')
-                print(f"Seja bem-vindo, {usuario}!")
-                menu_principal()
-            else:
-                print("Usuário ou senha inválidos.")
+                if user and checar_password(senha, user[1]):
+                    return usuario
 
-        case "2":
-            usuario = input("Usuário: ")
-            senha = getpass.getpass("Senha: ")
-            cadastrar_usuario(usuario, criptografar(senha))
+                print("Usuário ou senha inválidos. Tente novamente.")
 
-        case _:
-            print("Opção inválida.")
+            case "2":
+                usuario = input("Usuário: ")
+                senha = getpass.getpass("Senha: ")
+                cadastrar_usuario(usuario, criptografar(senha))
+                print("Faça login para acessar o sistema.")
+
+            case _:
+                print("Opção inválida. Tente novamente.")
 
 
-autenticar()
+usuario_logado = autenticar()
+os.system('cls' if os.name == 'nt' else 'clear')
+print(f"Seja bem-vindo, {usuario_logado}!")
+menu_principal()

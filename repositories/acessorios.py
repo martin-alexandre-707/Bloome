@@ -161,7 +161,16 @@ def deletar_acessorio(nome: str):
     except Exception as e:
         if con:
             con.rollback()
-        print(f"Erro ao excluir '{nome}': {e}")
+
+        # Aqui está o truque: verificamos se o erro é por causa de vínculo com vendas
+        erro_str = str(e).lower()
+        if "foreign key" in erro_str:
+            print(f"\nErro: Não é possível excluir '{nome}'.")
+            print("Este produto já possui histórico de vendas e não pode ser removido.")
+            print("Para fins de auditoria, mantenha o produto registrado.")
+        else:
+            print(f"Erro ao excluir '{nome}': {e}")
+
     finally:
         if cursor:
             cursor.close()

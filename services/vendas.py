@@ -1,4 +1,4 @@
-from repositories.pedidos import buscar_acessorio_por_nome, inserir_pedido, listar_historico_vendas, gerar_relatorio_financeiro
+from repositories.pedidos import buscar_acessorio_por_nome, inserir_pedido, listar_historico_vendas, gerar_relatorio_financeiro, verificar_estoque_carrinho
 from repositories.acessorios import listar_acessorios
 from config.utils import limpar_tela, pausar
 
@@ -62,6 +62,13 @@ def exibir_historico():
         print("\nNenhuma venda registrada até o momento.")
 
 
+def _exibir_problemas_estoque(problemas):
+    print("\nVENDA BLOQUEADA — Estoque insuficiente:")
+    for p in problemas:
+        print(f"  Produto '{p['produto']}' precisa de {p['necessario']:.2f} de '{p['insumo']}', mas só há {p['disponivel']:.2f} em estoque.")
+    print("\nAbasteca o estoque antes de registrar esta venda.")
+
+
 def registrar_venda():
     limpar_tela()
     print("\n" + "="*30)
@@ -118,7 +125,17 @@ def registrar_venda():
 
             subtotal = quantidade * valor_unitario
             total_geral += subtotal
-            carrinho.append((id_acessorio, nome_encontrado, quantidade, valor_unitario))
+
+            produto_ja_no_carrinho = False
+            for indice, item in enumerate(carrinho):
+                if item[0] == id_acessorio:
+                    quantidade_atual = item[2]
+                    carrinho[indice] = (item[0], item[1], quantidade_atual + quantidade, item[3])
+                    produto_ja_no_carrinho = True
+                    break
+
+            if not produto_ja_no_carrinho:
+                carrinho.append((id_acessorio, nome_encontrado, quantidade, valor_unitario))
             
             print(f"  + Adicionado! Subtotal: R$ {subtotal:.2f} | Carrinho: R$ {total_geral:.2f}\n")
 
@@ -141,6 +158,11 @@ def registrar_venda():
     print(f"{'TOTAL GERAL':>38} R$ {total_geral:>8.2f}")
     print("="*52)
 
+    problemas = verificar_estoque_carrinho(carrinho)
+    if problemas:
+        _exibir_problemas_estoque(problemas)
+        return
+
     while True:
         print("\nMétodos: Pix | Dinheiro | Cartão")
         metodo_pagamento = input("Pagamento: ").strip().title() 
@@ -153,7 +175,11 @@ def registrar_venda():
     confirmacao = input(f"\nConfirmar venda de R$ {total_geral:.2f}? (S/N): ").strip().upper()
 
     if confirmacao == "S":
-        inserir_pedido(nome_cliente, metodo_pagamento, total_geral, carrinho)
+        problemas = verificar_estoque_carrinho(carrinho)
+        if problemas:
+            _exibir_problemas_estoque(problemas)
+        else:
+            inserir_pedido(nome_cliente, metodo_pagamento, total_geral, carrinho)
     else:
         print("Venda cancelada.")
 

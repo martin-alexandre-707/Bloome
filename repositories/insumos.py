@@ -64,7 +64,7 @@ def listar_insumos(nome_insumo=None):
             con.close()
 
 
-def deletar_insumos(nome: str):
+def insumo_possui_dependencias(nome: str) -> bool:
     con = None
     cursor = None
     try:
@@ -72,22 +72,46 @@ def deletar_insumos(nome: str):
         cursor = con.cursor()
 
         cursor.execute("""
-            DELETE FROM insumos
-             WHERE nome = %s
+            SELECT EXISTS (
+                SELECT 1
+                  FROM composicao_acessorios ca
+                  JOIN insumos i ON i.id_insumos = ca.id_insumos
+                 WHERE i.nome = %s
+            )
         """, (nome,))
+
+        return cursor.fetchone()[0]
+
+    except Exception as e:
+        print(f"Erro ao verificar dependências do insumo '{nome}': {e}")
+        return False
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
+
+
+def deletar_insumos(nome: str):
+    con = None
+    cursor = None
+    try:
+        con = criar_conexao()
+        cursor = con.cursor()
+
+        cursor.execute("DELETE FROM insumos WHERE nome = %s", (nome,))
 
         con.commit()
 
         if cursor.rowcount == 0:
             print(f"Insumo '{nome}' não encontrado.")
         else:
-            print(f"{nome} deletado com sucesso!")
+            print(f"'{nome}' deletado com sucesso!")
 
     except Exception as e:
         if con:
             con.rollback()
         print(f"Erro ao excluir {nome}: {e}")
-
     finally:
         if cursor:
             cursor.close()

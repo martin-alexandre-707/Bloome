@@ -2,7 +2,6 @@
 --  BLOOME - Script de criação do banco de dados
 -- ============================================================
 
-
 -- TABELAS
 -- ============================================================
 
@@ -24,13 +23,13 @@ CREATE TABLE acessorios (
     id_acessorios       SERIAL PRIMARY KEY,
     nome_acessorios     VARCHAR(225) UNIQUE NOT NULL,
     categoria_acessorio VARCHAR(225),
-    valor_acessorio     DECIMAL(10, 2) NOT NULL CHECK (valor_acessorio > 0)
+    valor_acessorio     DECIMAL(10, 2) NOT NULL CHECK (valor_acessorio >= 0)
 );
 
 CREATE TABLE composicao_acessorios (
     id_insumos    INTEGER NOT NULL REFERENCES insumos(id_insumos) ON DELETE CASCADE,
     id_acessorios INTEGER NOT NULL REFERENCES acessorios(id_acessorios) ON DELETE CASCADE,
-    quantidade    DECIMAL(10, 2) NOT NULL,
+    quantidade    DECIMAL(10, 2) NOT NULL CHECK (quantidade > 0),
     PRIMARY KEY (id_insumos, id_acessorios)
 );
 
@@ -43,21 +42,20 @@ CREATE TABLE pedidos (
 );
 
 CREATE TABLE despesas (
-    id_despesas  SERIAL PRIMARY KEY,
-    descricao    VARCHAR(255) NOT NULL,
-    valor        DECIMAL(10, 2) NOT NULL CHECK (valor > 0),
+    id_despesas   SERIAL PRIMARY KEY,
+    descricao     VARCHAR(255) NOT NULL,
+    valor         DECIMAL(10, 2) NOT NULL CHECK (valor > 0),
     data_despesas DATE DEFAULT CURRENT_DATE,
-    categoria    VARCHAR(255) NOT NULL
+    categoria     VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE itens_pedidos (
-    id_pedidos       INTEGER NOT NULL REFERENCES pedidos(id_pedidos) ON DELETE CASCADE,
-    id_acessorios    INTEGER NOT NULL REFERENCES acessorios(id_acessorios),
+    id_pedidos         INTEGER NOT NULL REFERENCES pedidos(id_pedidos) ON DELETE CASCADE,
+    id_acessorios      INTEGER NOT NULL REFERENCES acessorios(id_acessorios),
     quantidade_vendida INTEGER NOT NULL CHECK (quantidade_vendida > 0),
-    valor_unitario   DECIMAL(10, 2) NOT NULL CHECK (valor_unitario >= 0),
+    valor_unitario     DECIMAL(10, 2) NOT NULL CHECK (valor_unitario >= 0),
     PRIMARY KEY (id_pedidos, id_acessorios)
 );
-
 
 -- FUNÇÕES E TRIGGERS
 -- ============================================================

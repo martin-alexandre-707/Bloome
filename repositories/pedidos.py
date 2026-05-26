@@ -127,3 +127,73 @@ def gerar_relatorio_financeiro():
             cursor.close()
         if con:
             con.close()
+
+
+def verificar_estoque_carrinho(carrinho: list) -> list:
+    """Retorna lista de problemas de estoque antes de gravar a venda."""
+    con = None
+    cursor = None
+    problemas = []
+    consumo_por_insumo = {}
+    try:
+        con = criar_conexao()
+        cursor = con.cursor()
+
+        for item in carrinho:
+            id_acessorio, nome_produto, quantidade, _ = item
+
+            cursor.execute("""
+                SELECT i.id_insumos,
+                       i.nome,
+                       ca.quantidade * %s AS necessario
+                  FROM composicao_acessorios ca
+                  JOIN insumos i ON i.id_insumos = ca.id_insumos
+                 WHERE ca.id_acessorios = %s
+            """, (quantidade, id_acessorio))
+
+            for ins in cursor.fetchall():
+                id_insumo = ins[0]
+                if id_insumo not in consumo_por_insumo:
+                    consumo_por_insumo[id_insumo] = {
+                        'produtos'  : [],
+                        'insumo'    : ins[1],
+                        'necessario': 0.0
+                    }
+
+                if nome_produto not in consumo_por_insumo[id_insumo]['produtos']:
+                    consumo_por_insumo[id_insumo]['produtos'].append(nome_produto)
+
+                consumo_por_insumo[id_insumo]['necessario'] += float(ins[2])
+
+        for id_insumo, dados in consumo_por_insumo.items():
+            cursor.execute("""
+                SELECT quantidade_estoque
+                  FROM insumos
+                 WHERE id_insumos = %s
+            """, (id_insumo,))
+
+            resultado = cursor.fetchone()
+            if not resultado:
+                continue
+
+            disponivel = float(resultado[0])
+            necessario = dados['necessario']
+
+            if disponivel < necessario:
+                problemas.append({
+                    'produto'   : ", ".join(dados['produtos']),
+                    'insumo'    : dados['insumo'],
+                    'disponivel': disponivel,
+                    'necessario': necessario
+                })
+
+        return problemas
+
+    except Exception as e:
+        print(f"Erro ao verificar estoque: {e}")
+        return []
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
