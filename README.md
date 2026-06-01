@@ -1,7 +1,14 @@
 # 🌸 Bloome — Sistema de Gestão de Vendas
 
-Sistema de gestão interna para controle de insumos, produtos (acessórios) e vendas, desenvolvido em Python com banco de dados PostgreSQL.
+## ✨ Funcionalidades em Destaque
 
+Este sistema foi projetado com foco na segurança e na resolução de problemas reais de gestão de negócios:
+
+* **📦 Gestão Integrada de Estoque:** Controle de duas camadas, gerenciando tanto a matéria-prima (insumos) quanto os produtos finais prontos para venda.
+* **🛒 Frente de Caixa e Histórico:** Registro completo de pedidos, permitindo rastrear o histórico de vendas de forma organizada.
+* **⚡ Automação Inteligente (Triggers):** A baixa de estoque não depende de ação manual. O banco de dados PostgreSQL foi programado com gatilhos automáticos para atualizar as quantidades instantaneamente após cada venda, evitando furos no estoque.
+* **📊 Resumos e Métricas:** Utilização de *Views* no banco de dados para compilar e facilitar a leitura do faturamento e saída de pedidos.
+* **🔐 Autenticação e Segurança:** Controle de acesso restrito com sistema de login e senhas blindadas por criptografia avançada (bcrypt).
 ---
 
 ## ⚙️ Pré-requisitos
