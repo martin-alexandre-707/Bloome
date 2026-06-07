@@ -32,6 +32,10 @@ def _selecionar_insumos():
             else:
                 break     
 
+        if not nome_digitado.replace(" ","").isalpha():
+            print("Erro: O nome do insumo deve conter apenas letras.")
+            continue
+
         insumo_encontrado = None
         
         for item in insumos_disponiveis:
@@ -83,8 +87,17 @@ def menu_acessorios():
         match opcao:
             case "1":
                 try:
-                    nome = input("Nome do produto: ").strip().lower()
-                    categoria = input("Categoria: ").strip().lower()
+                    while True:
+                        nome = input("Nome do produto: ").strip().lower()
+                        if nome != "" and nome.replace(" ","").isalpha():
+                            break
+                        print("Erro: O nome do produto deve conter apenas letras.")
+
+                    while True:
+                        categoria = input("Categoria: ").strip().lower()
+                        if categoria != "" and categoria.replace(" ","").isalpha():
+                            break
+                        print("Erro: A categoria deve conter apenas letras.")
 
                     resultado = _selecionar_insumos()
                     if resultado is None:
@@ -112,7 +125,12 @@ def menu_acessorios():
                 pausar()
 
             case "2":
-                busca = input("Digite o nome para buscar (ou pressione Enter para listar todos): ").strip().lower()
+                while True:
+                    busca = input("Digite o nome para buscar (ou pressione Enter para listar todos): ").strip().lower()
+                    if busca == "" or busca.replace(" ","").isalpha():
+                        break
+                    print("Erro: O nome para buscar deve conter apenas letras.")
+
                 busca = busca or None
                 produtos = listar_acessorios(busca)
 
@@ -142,7 +160,11 @@ def menu_acessorios():
                 print("-" * 30)
 
                 try:
-                    nome = input("Nome do produto que deseja atualizar: ").strip().lower()
+                    while True:
+                        nome = input("Nome do produto que deseja atualizar: ").strip().lower()
+                        if nome != "" and nome.replace(" ","").isalpha():
+                            break
+                        print("Erro: O nome do produto deve conter apenas letras.")
 
                     produtos_existentes = listar_acessorios(nome)
                     produto_encontrado = None
@@ -163,8 +185,24 @@ def menu_acessorios():
                     print(f"  Valor    : R$ {float(produto_encontrado[3]):.2f}")
                     print("\nNovos dados (Enter para manter o atual):")
 
-                    novo_nome = input(f"Nome [{produto_encontrado[1]}]: ").strip().lower() or produto_encontrado[1]
-                    categoria = input(f"Categoria [{produto_encontrado[2]}]: ").strip().lower() or produto_encontrado[2]
+                    while True:
+                        novo_nome = input(f"Nome [{produto_encontrado[1]}]: ").strip().lower()
+                        if novo_nome == "":
+                            novo_nome = produto_encontrado[1]
+                            break
+                        if novo_nome.replace(" ","").isalpha():
+                            break
+                        print("Erro: O nome do produto deve conter apenas letras.")
+
+                    while True:
+                        categoria = input(f"Categoria [{produto_encontrado[2]}]: ").strip().lower()
+                        if categoria == "":
+                            categoria = produto_encontrado[2]
+                            break
+                        if categoria.replace(" ","").isalpha():
+                            break
+                        print("Erro: A categoria deve conter apenas letras.")
+
                     valor_str = input(f"Preço de venda [{float(produto_encontrado[3]):.2f}]: ").replace(",", ".")
                     valor_venda = float(valor_str) if valor_str else float(produto_encontrado[3])
 
@@ -185,7 +223,11 @@ def menu_acessorios():
                     print(f"  {p[0]:<4} | {p[1]}")
                 print("-" * 30)
 
-                nome = input("Nome do produto que deseja deletar: ").strip().lower()
+                while True:
+                    nome = input("Nome do produto que deseja deletar: ").strip().lower()
+                    if nome != "" and nome.replace(" ","").isalpha():
+                        break
+                    print("Erro: O nome do produto deve conter apenas letras.")
 
                 produtos_existentes = listar_acessorios(nome)
                 produto_encontrado = False

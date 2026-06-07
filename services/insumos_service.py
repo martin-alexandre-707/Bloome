@@ -20,17 +20,33 @@ def menu_insumos():
         match opcao:
             case "1":
                 try:
-                    nome = input("Nome do insumo: ").strip().lower()
+                    while True:
+                        nome = input("Nome do insumo: ").strip().lower()
+                        if nome != "" and nome.replace(" ","").isalpha():
+                            break
+                        print("Erro: O nome do insumo deve conter apenas letras.")
+
                     valor = float(input("Valor unitário: ").replace(",", "."))
                     quantidade = float(input("Quantidade em estoque: ").replace(",", "."))
-                    categoria = input("Categoria: ").strip().lower()
+
+                    while True:
+                        categoria = input("Categoria: ").strip().lower()
+                        if categoria != "" and categoria.replace(" ","").isalpha():
+                            break
+                        print("Erro: A categoria deve conter apenas letras.")
+
                     insert_insumos(nome, valor, quantidade, categoria)
                 except ValueError:
                     print("Erro: valor e quantidade devem ser números.")
                 pausar()
 
             case "2":
-                busca = input("Digite o nome para buscar (ou pressione Enter para listar todos): ").strip().lower()
+                while True:
+                    busca = input("Digite o nome para buscar (ou pressione Enter para listar todos): ").strip().lower()
+                    if busca == "" or busca.replace(" ","").isalpha():
+                        break
+                    print("Erro: O nome para buscar deve conter apenas letras.")
+
                 busca = busca or None
                 insumos = listar_insumos(busca)
 
@@ -57,7 +73,11 @@ def menu_insumos():
                 print("-" * 30)
 
                 try:
-                    nome = input("Nome do insumo que deseja atualizar: ").strip().lower()
+                    while True:
+                        nome = input("Nome do insumo que deseja atualizar: ").strip().lower()
+                        if nome != "" and nome.replace(" ","").isalpha():
+                            break
+                        print("Erro: O nome do insumo deve conter apenas letras.")
 
                     insumos_existentes = listar_insumos(nome)
                     insumo_encontrado = None
@@ -78,12 +98,28 @@ def menu_insumos():
                     print(f"  Categoria: {insumo_encontrado[4]}")
                     print("\nNovos dados (Enter para manter o atual):")
 
-                    novo_nome = input(f"Nome [{insumo_encontrado[1]}]: ").strip().lower() or insumo_encontrado[1]
+                    while True:
+                        novo_nome = input(f"Nome [{insumo_encontrado[1]}]: ").strip().lower()
+                        if novo_nome == "":
+                            novo_nome = insumo_encontrado[1]
+                            break
+                        if novo_nome.replace(" ","").isalpha():
+                            break
+                        print("Erro: O nome do insumo deve conter apenas letras.")
+
                     valor_str = input(f"Valor unitário [{float(insumo_encontrado[2]):.2f}]: ").replace(",", ".")
                     valor = float(valor_str) if valor_str else float(insumo_encontrado[2])
                     qtd_str = input(f"Quantidade em estoque [{float(insumo_encontrado[3])}]: ").replace(",", ".")
                     quantidade = float(qtd_str) if qtd_str else float(insumo_encontrado[3])
-                    categoria = input(f"Categoria [{insumo_encontrado[4]}]: ").strip().lower() or insumo_encontrado[4]
+
+                    while True:
+                        categoria = input(f"Categoria [{insumo_encontrado[4]}]: ").strip().lower()
+                        if categoria == "":
+                            categoria = insumo_encontrado[4]
+                            break
+                        if categoria.replace(" ","").isalpha():
+                            break
+                        print("Erro: A categoria deve conter apenas letras.")
 
                     atualizar_insumos(nome, novo_nome, valor, quantidade, categoria)
                 except ValueError:
@@ -101,7 +137,11 @@ def menu_insumos():
                     print(f"  {i[0]:<4} | {i[1]}")
                 print("-" * 30)
 
-                nome = input("Nome do insumo que deseja deletar: ").strip().lower()
+                while True:
+                    nome = input("Nome do insumo que deseja deletar: ").strip().lower()
+                    if nome != "" and nome.replace(" ","").isalpha():
+                        break
+                    print("Erro: O nome do insumo deve conter apenas letras.")
 
                 insumos_existentes = listar_insumos(nome)
                 insumo_encontrado = any(i[1] == nome for i in insumos_existentes)

@@ -75,7 +75,11 @@ def registrar_venda():
     print("        NOVO PEDIDO")
     print("="*30)
 
-    nome_cliente = input("Nome do cliente (ou Enter para pular): ").strip()
+    while True:
+        nome_cliente = input("Nome do cliente (ou Enter para pular): ").strip()
+        if nome_cliente == "" or nome_cliente.replace(" ","").isalpha():
+            break
+        print("Erro: O nome do cliente deve conter apenas letras.")
 
     if nome_cliente == "":
         nome_cliente = "Consumidor Final"
@@ -99,6 +103,10 @@ def registrar_venda():
 
         if nome_produto == "":
             break 
+
+        if not nome_produto.replace(" ","").isalpha():
+            print("Erro: O nome do produto deve conter apenas letras.")
+            continue
 
         acessorio = buscar_acessorio_por_nome(nome_produto)
 
